@@ -1,0 +1,9 @@
+.footer {
+  font-family: Courgette;
+  font-size: 28px;
+  text-align: center;
+  height: 20vh;
+  line-height: 20vh;
+  background-color: black;
+  color: white;
+}

@@ -4,8 +4,18 @@ import "../styles/header.css";
 export default function Header() {
   const navigate = useNavigate();
   return (
-    <div className='header' onClick={() => navigate("/")}>
-      Student Lease
-    </div>
+    <>
+      <div className='header-container'>
+        <span className='header' onClick={() => navigate("/")}>
+          Student Lease
+        </span>
+        <img
+          className='white-background-logo'
+          onClick={() => navigate("/")}
+          src={require("../resources/logo-white-background.png")}
+          alt=''
+        />
+      </div>
+    </>
   );
 }

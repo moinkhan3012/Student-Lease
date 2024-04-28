@@ -1,11 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import "../styles/listing.css";
+import { useEffect } from "react";
 
 const Listing = () => {
+  useEffect(() => {
+    document.title = "Student Lease | Add a property";
+  });
   const navigate = useNavigate();
   return (
-    <>
+    <div className='container-listing'>
       <Header />
       <div className='add-property'>
         <div className='title-text'>Add a property</div>
@@ -32,7 +37,10 @@ const Listing = () => {
           Create listing
         </div>
       </div>
-    </>
+      <div className='footer-listing'>
+        <Footer />
+      </div>
+    </div>
   );
 };
 

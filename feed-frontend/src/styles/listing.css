@@ -54,3 +54,9 @@ body {
   margin: 5px auto 0px auto;
   border-radius: 5px;
 }
+.footer-listing {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}

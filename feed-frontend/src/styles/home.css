@@ -1,0 +1,67 @@
+.description-flex {
+  display: flex;
+}
+.subtitle2 {
+  font-size: 48px;
+}
+.home-image {
+  width: 100%;
+  height: 30vh;
+}
+.container {
+  position: relative;
+  text-align: center;
+  color: red;
+}
+.title1 {
+  font-size: 40px;
+  color: white;
+}
+.subtitle1 {
+  color: #016afd;
+  font-size: 24px;
+}
+.login,
+.find-sublets {
+  color: white;
+  padding: 8px 16px;
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #016afd;
+}
+.login:hover,
+.find-sublets {
+  cursor: pointer;
+}
+.login-flex {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  align-items: center;
+}
+.description-flex {
+  display: flex;
+  background-color: white;
+  height: 50vh;
+  align-items: center;
+  justify-content: center;
+}
+.home-animated {
+  width: 35%;
+}
+#sublet-text-specific {
+  color: #016afd;
+}
+.description {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #454545;
+}
+#find-sublet-div {
+  margin-top: 30px;
+}

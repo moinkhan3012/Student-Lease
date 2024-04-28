@@ -16,3 +16,7 @@ code {
   font-family: Salsa;
   src: url("../../public/Salsa-Regular.ttf");
 }
+@font-face {
+  font-family: Courgette;
+  src: url("../../public/Courgette-Regular.ttf");
+}

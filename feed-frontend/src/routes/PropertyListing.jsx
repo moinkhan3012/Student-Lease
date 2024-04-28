@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/header.css";
-import "../styles/property-details.css";
+import "../styles/property-listing.css";
+import Footer from "../components/Footer";
+import { useEffect } from "react";
 
 const PropertyListing = () => {
+  useEffect(() => {
+    document.title = "Student Lease | Add property details";
+  });
   const navigate = useNavigate();
   return (
     <>
@@ -181,6 +186,9 @@ const PropertyListing = () => {
         <a href='' className='publish-listing'>
           Publish listing
         </a>
+      </div>
+      <div className='property-listing-footer'>
+        <Footer />
       </div>
     </>
   );
