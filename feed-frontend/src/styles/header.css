@@ -1,0 +1,10 @@
+.header {
+  text-align: center;
+  font-size: 24px;
+  box-shadow: 0px 1px 5px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+.header:hover {
+  cursor: pointer;
+}

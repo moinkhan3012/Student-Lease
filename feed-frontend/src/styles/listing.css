@@ -1,0 +1,56 @@
+body {
+  font-family: Salsa;
+  padding: 0;
+  margin: 0;
+  background-color: #fbfbfb;
+}
+.btn-create-listing {
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  margin-top: 20px;
+  background-color: #016afd;
+  color: white;
+  padding: 10px;
+  margin: 0px 20px;
+  border-radius: 10px;
+}
+.btn-create-listing:hover {
+  cursor: pointer;
+}
+.add-property {
+  width: 50%;
+  margin: 40px auto;
+  border: 1px solid black;
+  padding-bottom: 20px;
+  border-radius: 10px;
+}
+.title-text {
+  font-size: 20px;
+  text-align: center;
+  padding: 10px;
+}
+.horizontal-line {
+  border: 0.5px solid black;
+  margin-bottom: 10px;
+}
+.property-container {
+  padding: 20px;
+}
+
+.property-details {
+  margin-top: 10px;
+}
+.subtitle-text {
+  font-size: 18px;
+}
+.property-input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f1f1f1;
+  border: 1px solid #a4a4a4;
+  height: 40px;
+  padding: 0 10px;
+  margin: 5px auto 0px auto;
+  border-radius: 5px;
+}
