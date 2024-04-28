@@ -1,5 +1,4 @@
-import PostListing from "../routes/PostListing";
-import "../styles/App.css";
+import "../styles/app.css";
 
 const App = () => {
   return <>App</>;

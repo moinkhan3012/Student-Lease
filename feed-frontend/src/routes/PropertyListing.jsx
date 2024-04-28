@@ -167,6 +167,13 @@ const PropertyListing = () => {
             <br />
           </div>
         </div>
+
+        <div className='listing-info-header-text'>Laundry</div>
+        <input type='radio' name='fav_language' value='none' />
+        <label for='html'>None</label>
+        <br />
+        <input type='radio' name='fav_language' value='in-unit' />
+        <label for='css'>In unit</label>
         <div className='listing-info-header-text'>Detailed description</div>
         <div className='property-detail-field-title'>About the property</div>
         <textarea className='property-description'></textarea>
