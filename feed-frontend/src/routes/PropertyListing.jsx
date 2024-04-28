@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/header.css";
 import "../styles/property-details.css";
@@ -54,7 +54,7 @@ const PropertyListing = () => {
 
         <div className='horizontal-box'>
           <div>
-            <div className='listing-info-header-text'>Amenities and rules</div>
+            <div className='listing-info-header-text'>Amenities</div>
             <input type='checkbox' id='amenity1' name='amenity1' value='ac' />
             <label for='amenity1'>A/C</label>
             <br />

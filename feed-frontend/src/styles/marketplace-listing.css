@@ -1,0 +1,22 @@
+.preview-box {
+  width: 50%;
+  margin: 40px auto;
+  border: 1px solid black;
+  padding-bottom: 20px;
+  border-radius: 10px;
+}
+.title-text {
+  font-size: 20px;
+  text-align: center;
+  padding: 10px;
+}
+.horizontal-line {
+  border: 0.5px solid black;
+  margin-bottom: 10px;
+}
+.marketplace-container {
+  padding: 20px;
+}
+.item-details {
+  margin-top: 10px;
+}
