@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import "../styles/marketplace-listing.css";
 
 const MarketplaceListing = () => {
@@ -31,6 +32,9 @@ const MarketplaceListing = () => {
         >
           Create listing
         </div>
+      </div>
+      <div className='footer-listing'>
+        <Footer />
       </div>
     </>
   );

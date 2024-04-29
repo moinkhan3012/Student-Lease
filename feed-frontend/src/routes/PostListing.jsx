@@ -1,8 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/post-listing.css";
+import { useEffect } from "react";
 
 const PostListing = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Student Lease | Post listing";
+  }, []);
   return (
     <div className='background'>
       <div className='sublet-title-text'>
@@ -13,7 +17,11 @@ const PostListing = () => {
         All in one with StudentLease Sublet Manager
       </div>
       <div className='choose-listing-type'>
-        <a href='' className='sublet-button marketplace-listing'>
+        <a
+          href=''
+          className='sublet-button marketplace-listing'
+          onClick={() => navigate("/search-listing")}
+        >
           Search for sublease
         </a>
         <div

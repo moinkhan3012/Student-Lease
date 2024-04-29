@@ -19,7 +19,10 @@ const PropertyListing = () => {
           src={require("../resources/left-arrow.png")}
           alt=''
         />
-        <a className='properties-page' onClick={() => navigate("/listing")}>
+        <a
+          className='properties-page'
+          onClick={() => navigate("/create-property-listing")}
+        >
           {" "}
           Add a property
         </a>

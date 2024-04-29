@@ -1,8 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/post-listing.css";
+import { useEffect } from "react";
 
 const ListingType = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Student Lease | Select listing type";
+  }, []);
   return (
     <div className='background'>
       <div className='sublet-title-text'>
@@ -13,11 +17,15 @@ const ListingType = () => {
         All in one with StudentLease Sublet Manager
       </div>
       <div className='choose-listing-type'>
-        <a href='' className='sublet-button marketplace-listing'>
+        <a
+          href=''
+          className='sublet-button marketplace-listing'
+          onClick={() => navigate("/marketplace-listing")}
+        >
           Marketplace listing
         </a>
         <a
-          onClick={() => navigate("/listing")}
+          onClick={() => navigate("/create-property-listing")}
           className='sublet-button property-listing'
         >
           Property listing

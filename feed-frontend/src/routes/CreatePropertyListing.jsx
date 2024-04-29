@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import "../styles/listing.css";
+import "../styles/create-property-listing.css";
 import { useEffect } from "react";
 
-const Listing = () => {
+const CreatePropertyListing = () => {
   useEffect(() => {
     document.title = "Student Lease | Add a property";
   });
@@ -44,4 +44,4 @@ const Listing = () => {
   );
 };
 
-export default Listing;
+export default CreatePropertyListing;

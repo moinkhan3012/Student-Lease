@@ -1,0 +1,19 @@
+.listing-count {
+  font-size: 14px;
+  margin-top: 40px;
+}
+.nearby-listings-title {
+  font-size: 28px;
+  font-family: Salsa;
+  border-radius: 5px;
+}
+option {
+  font-size: 12px;
+}
+.nearby-listings-title-container {
+  font-size: 28px;
+  margin-top: 5px;
+}
+.select-listing-text {
+  margin-top: 20px;
+}

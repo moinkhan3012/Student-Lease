@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "./Home";
-import Listing from "./Listing";
+import CreatePropertyListing from "./CreatePropertyListing";
 import PostListing from "./PostListing";
 import PropertyListing from "./PropertyListing";
 import ListingType from "./ListingType";
@@ -9,7 +9,7 @@ import SearchListing from "./SearchListing";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
-  { path: "/listing", element: <Listing /> },
+  { path: "/create-property-listing", element: <CreatePropertyListing /> },
   { path: "/post-listing", element: <PostListing /> },
   { path: "/listing-type", element: <ListingType /> },
   { path: "/property-listing", element: <PropertyListing /> },
