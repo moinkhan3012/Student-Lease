@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import Footer from "../components/Footer";
 import "../styles/home.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   useEffect(() => {
     document.title = "Student Lease | Login";
   }, []);
@@ -33,7 +35,12 @@ const Home = () => {
             applying, to paying rent.
           </div>
           <div id='find-sublet-div'>
-            <span className='find-sublets'>Find Sublets</span>
+            <span
+              className='find-sublets'
+              onClick={() => navigate("/search-listing")}
+            >
+              Find Sublets
+            </span>
           </div>
         </div>
         <img

@@ -1,0 +1,70 @@
+.view-container {
+  display: flex;
+  margin-top: 30px;
+  padding: 30px;
+}
+.listing-view-info {
+  width: 100%;
+}
+.listing-view-images > img {
+  height: 350px;
+}
+.listing-view-info {
+  padding: 20px;
+  padding-top: 0px;
+}
+.listing-price {
+  font-size: 20px;
+}
+.listing-specific-details {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.listing-bedroom-count,
+.listing-baths-count {
+  text-align: center;
+  flex-grow: 1;
+  border: 1px solid black;
+  margin-top: 5px;
+  padding: 10px;
+}
+.listing-view-address {
+  font-size: 30px;
+}
+.listing-owner {
+  padding: 10px;
+  border: 1px solid black;
+  margin-top: 10px;
+}
+#listing-profile-image {
+  height: 80px;
+  float: left;
+}
+.listing-username {
+  font-size: 20px;
+  margin-left: 20px;
+}
+.listing-owner-info {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.listing-owner-chat {
+  text-transform: uppercase;
+  text-align: center;
+  color: white;
+  padding: 14px;
+  margin-top: 10px;
+  border: 2px solid #016afd;
+  background-color: #319deb;
+  transition: box-shadow 0.1s ease-in-out;
+}
+.listing-owner-chat:hover {
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+#room-logo,
+#bath-logo {
+  height: 30px;
+}

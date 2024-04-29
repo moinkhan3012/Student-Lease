@@ -6,6 +6,7 @@ import PropertyListing from "./PropertyListing";
 import ListingType from "./ListingType";
 import MarketplaceListing from "./MarketplaceListing";
 import SearchListing from "./SearchListing";
+import ViewListing from "./ViewListing";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
   { path: "/property-listing", element: <PropertyListing /> },
   { path: "/marketplace-listing", element: <MarketplaceListing /> },
   { path: "/search-listing", element: <SearchListing /> },
+  { path: "/view-listing", element: <ViewListing /> },
 ]);
 
 export default router;
