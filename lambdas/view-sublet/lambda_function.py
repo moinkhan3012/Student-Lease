@@ -8,27 +8,23 @@ from geopy.geocoders import Photon
 from geopy.exc import GeocoderTimedOut
 from boto3.dynamodb.conditions import Key
 import io
-
-esUrl = "https://search-test-elastic-ku7jpzixjyqgxg5oqye5fskm3u.aos.us-east-1.on.aws/sublets/_search"
+# https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws
+esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_search"
 dynamo = boto3.resource('dynamodb')
 dynamodb = dynamo.Table('Listings')
 s3 = boto3.client('s3')
-# bucket_name = 'studentlease-listing-images1'
-
+bucket_name = 'studentlease-listing-images'
 def fetch_s3_object_as_base64(key):
     try:
-        response = s3.get_object(Bucket='studentlease-listing-images1', Key=key)
+        response = s3.get_object(Bucket='studentlease-listing-images', Key=key)
         print('fetch_s3_object_as_base64', response)
-        image_content = response['Body'].read().decode('utf-8')
-        # print('image_content', image_content)
-        # base64_image = base64.b64encode(image_content).decode('utf-8')
-        # print('base64_image', base64_image)
-        # print('base64_image', base64_image)
-        return image_content
+        binary_image_data = response['Body'].read()
+        # Encode the binary image data into a Base64 string
+        base64_image_data = base64.b64encode(binary_image_data).decode('utf-8')
+        return base64_image_data
     except Exception as e:
         print(f"Error fetching S3 object: {e}")
         return None
-
 def lambda_handler(event, context):
     # Extract search parameters from the event
     print('here')
@@ -62,7 +58,7 @@ def lambda_handler(event, context):
         esUrl,
         data=json.dumps(body),
         headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
     )
     # # Extract apartment IDs from search results
     print('search_result', search_result.json())
@@ -95,9 +91,7 @@ def lambda_handler(event, context):
     #     "statusCode": 200,
     #     "body": json.dumps(apartment_details)
     # }
-    # return response
-    
-    
+    return apartment_details
 def geocode_address(address):
     geolocator = Photon(user_agent="myGeocoder")
     try:

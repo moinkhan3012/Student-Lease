@@ -9,7 +9,13 @@ const SearchListing = () => {
 
   const searchListings = (searchQuery) => {
     console.log(searchQuery);
-    fetch("http://localhost:5000?" + new URLSearchParams(searchQuery))
+    fetch(
+      "http://localhost:5000?" +
+        new URLSearchParams({
+          ...searchQuery,
+          subletOrMarketplace: subletOrMarketplace,
+        })
+    )
       .then((res) =>
         res.json().then((data) => setListingDetails(data.listings))
       )
