@@ -49,31 +49,35 @@ const PropertyListing = () => {
       securityDeposit: securityDeposit,
       bedrooms: bedrooms,
       bathrooms: bathrooms,
-      area: area,
+      squareFeet: area,
       dateAvailable: dateAvailable,
       leaseDuration: leaseDuration,
-      laundry: laundry,
-      description: description,
+      amenities: {
+        laundry: laundry,
+        ac: ac,
+        balconyOrDeck: balconyOrDeck,
+        furnished: furnished,
+        hardwoodFloor: hardwoodFloor,
+        wheelchairAccess: wheelchairAccess,
+        garageParking: garageParking,
+        offStreetParking: offStreetParking,
+      },
+      preferences: {
+        preferenceMale: preferenceMale,
+        preferenceFemale: preferenceFemale,
+        nonBinary: nonBinary,
+        smoker: smoker,
+        nonSmoker: nonSmoker,
+        vegetarian: vegetarian,
+        nonVegetarian: nonVegetarian,
+      },
+      detailedDescription: description,
       images: images,
-      ac: ac,
-      balconyOrDeck: balconyOrDeck,
-      furnished: furnished,
-      hardwoodFloor: hardwoodFloor,
-      wheelchairAccess: wheelchairAccess,
-      garageParking: garageParking,
-      offStreetParking: offStreetParking,
-      preferenceMale: preferenceMale,
-      preferenceFemale: preferenceFemale,
-      nonBinary: nonBinary,
-      smoker: smoker,
-      nonSmoker: nonSmoker,
-      vegetarian: vegetarian,
-      nonVegetarian: nonVegetarian,
       address: address + ", " + unitNumber,
       roomType: propertyType,
       title: address + ", " + unitNumber,
     };
-    console.log(reqBody);
+    console.log("Request body:", reqBody);
     fetch(
       "https://403qyxndg3.execute-api.us-east-1.amazonaws.com/dev/studentLease/create-sublet/",
       {
@@ -90,7 +94,6 @@ const PropertyListing = () => {
     )
       .then((res) => {
         console.log(res);
-        // return res.json();
       })
       .catch((error) => console.log("Error while processing", error));
   };
