@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/listing.css";
 
 const Listing = ({ listingDetails, isSublet }) => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const Listing = ({ listingDetails, isSublet }) => {
           <div className='listing-address'>{listingDetails.address}</div>
           <div className='beds-and-distance'>{bedsAndDistance}</div>
           <div className='listing-dateAvailable'>
-            {isSublet && listingDetails.dateAvailable}
+            Date available: {isSublet && listingDetails.dateAvailable}
           </div>
           <div className='monthlyRent'>
             {isSublet && "$" + listingDetails.monthlyRent + "/month"}

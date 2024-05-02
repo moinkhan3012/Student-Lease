@@ -43,6 +43,10 @@ body {
 .property-detail-field {
   margin-top: 10px;
 }
+#files {
+  background-color: transparent;
+  border: none;
+}
 .publish-listing {
   text-decoration: none;
   text-align: center;
@@ -52,6 +56,9 @@ body {
   color: white;
   padding: 10px;
   border-radius: 10px;
+}
+.publish-listing:hover {
+  cursor: pointer;
 }
 input,
 textarea {

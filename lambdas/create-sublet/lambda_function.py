@@ -8,18 +8,15 @@ import requests
 from requests.auth import HTTPBasicAuth
 import uuid
 from decimal import Decimal
-
 dynamodb = boto3.resource('dynamodb')
 table_name = 'Listings'
 s3 = boto3.client('s3')
-bucket_name = 'studentlease-listing-images1'
-google_maps_api_key = ''
-
+bucket_name = 'studentlease-listing-images'
+# google_maps_api_key = ''
 def lambda_handler(event, context):
     # print('event', event)
     # try:
         request_body = event
-        
         if 'title' not in request_body:
             return {
                 'statusCode': 400,
@@ -57,8 +54,6 @@ def get_listing(listing_id):
     table = dynamodb.Table(table_name)
     response = table.get_item(Key={'id': listing_id})
     return response.get('Item')
-    
-
 def update_index_listing(listing):
     url = 'https://search-test-elastic-ku7jpzixjyqgxg5oqye5fskm3u.aos.us-east-1.on.aws/sublets/_search'
     headers = {"Content-Type": "application/json"}
@@ -83,7 +78,6 @@ def update_index_listing(listing):
         sublet_id = response.json()['hits']['hits']['_source']['id']
     except e:
         print('Error calling Elastic Search while retrieving listing id')
-    
     esUrl = f"https://search-test-elastic-ku7jpzixjyqgxg5oqye5fskm3u.aos.us-east-1.on.aws/sublets/_update/{sublet_id}"
     headers = {"Content-Type": "application/json"}
     esDoc = {
@@ -105,7 +99,6 @@ def update_index_listing(listing):
         headers=headers,
         auth=HTTPBasicAuth('', '')
     )
-    
 def create_listing(request_body, listing_id, user_id):
     # Geocode address to get latitude and longitude
     latitude, longitude = geocode_address(request_body.get('address'))
@@ -136,9 +129,9 @@ def create_listing(request_body, listing_id, user_id):
         'detailedDescription': request_body.get('detailedDescription', None)
     }
     return listing_item
-    
 def index_listing(listing):
-    esUrl = "https://search-test-elastic-ku7jpzixjyqgxg5oqye5fskm3u.aos.us-east-1.on.aws/sublets/_doc"
+    # https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.us-east-1.es.amazonaws.com
+    esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_doc"
     headers = {"Content-Type": "application/json"}
     esDoc = {
         'id': listing['id'],
@@ -157,9 +150,9 @@ def index_listing(listing):
         esUrl,
         data=json.dumps(esDoc).encode("utf-8"),
         headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
     )
-
+    print(response)
 def update_listing(existing_listing, request_body, user_id):
     # Update existing listing attributes
     existing_listing['title'] = request_body.get('title')
@@ -173,11 +166,9 @@ def update_listing(existing_listing, request_body, user_id):
     new_image_urls = upload_images(request_body.get('images', []))
     existing_listing['images'].extend(new_image_urls)
     return existing_listing
-
 def save_listing(listing_item):
     # Save the listing item to DynamoDB
     dynamodb.Table(table_name).put_item(Item=listing_item)
-
 def geocode_address(address):
     geolocator = Photon(user_agent="myGeocoder")
     try:
@@ -189,15 +180,14 @@ def geocode_address(address):
     except GeocoderTimedOut:
         print("Geocoding service timed out")
         return None, None
-    
 def upload_images(images):
     image_urls = []
     for image_data in images:
         image_key = str(uuid.uuid4()) + '.jpg'  # Generate a unique key for the image
         # image_key = "test1.jpg"
-        # binary_data = base64.b64decode(image_data)
+        binary_data = base64.b64decode(image_data)
         try:
-            response = s3.put_object(Body=image_data, Bucket=bucket_name, Key=image_key)
+            response = s3.put_object(Body=binary_data, Bucket=bucket_name, Key=image_key)
             image_url = f"https://{bucket_name}.s3.amazonaws.com/{image_key}"  # Construct the URL of the uploaded image
             image_urls.append(image_url)
             return image_urls
