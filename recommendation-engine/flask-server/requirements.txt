@@ -6,3 +6,6 @@ flask==3.0.3
 python-dotenv
 elasticsearch==8.13.0
 gunicorn
+boto3
+cloudpickle
+flask_swagger_ui

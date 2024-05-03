@@ -1,0 +1,197 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Embeddings API",
+    "description": "API for generating embeddings",
+    "version": "1.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api": {
+      "get": {
+        "description": "Returns message showing app is up",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/embeddings": {
+      "post": {
+        "summary": "Generate embeddings",
+        "description": "Endpoint for generating embeddings from JSON data",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON data for generating embeddings",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "streetAddress": {
+                  "type": "string",
+                  "example": "60 Terrace View Ave"
+                },
+                "cityRegion": {
+                  "type": "string",
+                  "example": "New York"
+                },
+                "zipcode": {
+                  "type": "number",
+                  "example": 10463.0
+                },
+                "bathrooms": {
+                  "type": "number",
+                  "example": 2.0
+                },
+                "bedrooms": {
+                  "type": "number",
+                  "example": 5.0
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Discover Marble Hill..."
+                },
+                "homeStatus": {
+                  "type": "number",
+                  "example": 1
+                },
+                "latitude": {
+                  "type": "number",
+                  "example": 40.877742767333984
+                },
+                "livingArea": {
+                  "type": "number",
+                  "example": 1889.0
+                },
+                "longitude": {
+                  "type": "number",
+                  "example": -73.9108657836914
+                },
+                "price": {
+                  "type": "number",
+                  "example": 799.999
+                },
+                "homeType": {
+                  "type": "string",
+                  "example": "Private"
+                },
+                "Month": {
+                  "type": "number",
+                  "example": 6
+                },
+                "Day": {
+                  "type": "number",
+                  "example": 6
+                },
+                "Year": {
+                  "type": "number",
+                  "example": 2024
+                },
+                "preferences": {
+                  "type": "string",
+                  "example": "male,female,non_smoker,non_veg"
+                },
+                "laundary": {
+                  "type": "number",
+                  "example": 0
+                },
+                "amenities": {
+                  "type": "string",
+                  "example": "ac,furnished,cooling,heating,parking"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "embedding": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "err": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendation": {
+      "post": {
+        "summary": "Post recommendations",
+        "description": "Endpoint for getting recommendations based on item list",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "List of item IDs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "item_list": {
+                  "type": "list",
+                  "example": [
+                    "6633ea6941c4340db760e079",
+                    "6633ea6941c4340db760e07a",
+                    "6633ea6941c4340db760e07b",
+                    "6633ea6941c4340db760e07c",
+                    "6633ea6941c4340db760e07d"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "err": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
