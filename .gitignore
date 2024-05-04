@@ -127,6 +127,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+lease-venv
 
 # Spyder project settings
 .spyderproject
