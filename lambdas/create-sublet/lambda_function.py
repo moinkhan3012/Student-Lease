@@ -7,17 +7,18 @@ from geopy.exc import GeocoderTimedOut
 import requests
 from requests.auth import HTTPBasicAuth
 import uuid
-from decimal import Decimal
+
 dynamodb = boto3.resource('dynamodb')
 table_name = 'Listings'
 s3 = boto3.client('s3')
-bucket_name = 'studentlease-listing-images'
-# google_maps_api_key = ''
+bucket_name = 'studentlease-listing-images1'
+
 def lambda_handler(event, context):
-    # print('event', event)
-    # try:
-        request_body = event
+        # print('event', event)
+    try:
+        request_body = event['reqBody']
         if 'title' not in request_body:
+            print('no title in request_body')
             return {
                 'statusCode': 400,
                 'body': json.dumps({'message': 'Title is required'})
@@ -36,6 +37,7 @@ def lambda_handler(event, context):
         else:
             # Create new listing
             new_listing = create_listing(request_body, listing_id, user_id)
+            print('new_listing', new_listing)
             index_listing(new_listing)
             new_listing['latitude'] = str(new_listing['latitude'])
             new_listing['longitude'] = str(new_listing['longitude'])
@@ -44,12 +46,12 @@ def lambda_handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps({'message': 'Listing saved successfully', 'listingId': listing_id})
             }
-    # except Exception as e:
-    #     print('Error saving listing:', e)
-    #     return {
-    #         'statusCode': 500,
-    #         'body': json.dumps({'message': 'Internal server error'})
-    #     }
+    except Exception as e:
+        print('Error saving listing:', e)
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': 'Internal server error'})
+        }
 def get_listing(listing_id):
     table = dynamodb.Table(table_name)
     response = table.get_item(Key={'id': listing_id})
@@ -183,14 +185,24 @@ def geocode_address(address):
 def upload_images(images):
     image_urls = []
     for image_data in images:
-        image_key = str(uuid.uuid4()) + '.jpg'  # Generate a unique key for the image
-        # image_key = "test1.jpg"
         binary_data = base64.b64decode(image_data)
+        mime_type = None
+        if binary_data.startswith(b'\xFF\xD8'):
+            mime_type = 'image/jpeg'
+        elif binary_data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
+            mime_type = 'image/png'
+        else:
+            print('Unsupported file format.')
+            continue
+        file_extension = '.jpg' if mime_type == 'image/jpeg' else '.png'
+        image_key = str(uuid.uuid4()) + file_extension  # Generate a unique key for the image
         try:
             response = s3.put_object(Body=binary_data, Bucket=bucket_name, Key=image_key)
             image_url = f"https://{bucket_name}.s3.amazonaws.com/{image_key}"  # Construct the URL of the uploaded image
             image_urls.append(image_url)
-            return image_urls
+            print("s3response", response)
+            print("image_urls", image_urls)
         except Exception as e:
             print('Error uploading file to S3: {}'.format(str(e)))
-            return image_urls
+            # return image_urls
+    return image_urls

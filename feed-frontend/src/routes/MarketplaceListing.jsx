@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import getBase64 from "../utils/getBase64";
+import { Header, Footer } from "../components";
+import { getBase64 } from "../utils";
 import "../styles/marketplace-listing.css";
 
 const MarketplaceListing = () => {

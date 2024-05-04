@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import SearchHeader from "../components/SearchHeader";
-import Listing from "../components/Listing";
+import { SearchHeader, Listing } from "../components";
 import "../styles/search-listing.css";
 
 const SearchListing = () => {

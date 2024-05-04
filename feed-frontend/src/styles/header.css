@@ -24,3 +24,32 @@
 .white-background-logo:hover {
   cursor: pointer;
 }
+.profile-image {
+  height: 20px;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  padding: 3px;
+}
+.profile-image:hover {
+  cursor: pointer;
+}
+.user-image-dropdown-content {
+  position: absolute;
+  right: 0;
+  background-color: #f1f1f1;
+  min-width: 100px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.user-image-dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.user-image-dropdown-content a:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}

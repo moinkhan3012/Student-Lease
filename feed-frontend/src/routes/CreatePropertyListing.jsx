@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import "../styles/create-property-listing.css";
+import { Header, Footer } from "../components";
 import { useEffect, useState } from "react";
+import "../styles/create-property-listing.css";
 
 const CreatePropertyListing = () => {
   const [address, setAddress] = useState("");

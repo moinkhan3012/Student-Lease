@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import "../styles/search-header.css";
 import { useState } from "react";
+import { logout } from "../utils";
+import "../styles/search-header.css";
 
 const SearchHeader = ({ onClick }) => {
   const navigate = useNavigate();
+  const [showLogoutButton, setShowLogoutButton] = useState(false);
   const [searchQuery, setSearchQuery] = useState({
     address: "",
     bedroom: "",
@@ -36,6 +38,20 @@ const SearchHeader = ({ onClick }) => {
           src={require("../resources/logo-white-background.png")}
           alt=''
         />
+        <div className='dropdown'>
+          <img
+            id='profile-image'
+            src={require("../resources/user.png")}
+            alt=''
+            className='profile-image'
+            onClick={() => setShowLogoutButton(!showLogoutButton)}
+          />
+          {showLogoutButton && (
+            <div class='user-image-dropdown-content'>
+              <a onClick={logout}>Logout</a>
+            </div>
+          )}
+        </div>
       </div>
       <div className='filters-container-parent'>
         <div className='txt-filters'>Filters</div>

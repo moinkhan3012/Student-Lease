@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import Footer from "../components/Footer";
-import "../styles/home.css";
+import { Footer } from "../components";
 import { useNavigate } from "react-router-dom";
+import "../styles/home.css";
 
 const Home = () => {
   const navigate = useNavigate();
