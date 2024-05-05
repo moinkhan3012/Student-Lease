@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 import boto3
 import requests
 import base64
@@ -8,15 +8,16 @@ from geopy.geocoders import Photon
 from geopy.exc import GeocoderTimedOut
 from boto3.dynamodb.conditions import Key
 import io
-# https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws
+
 esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_search"
 dynamo = boto3.resource('dynamodb')
 dynamodb = dynamo.Table('Listings')
 s3 = boto3.client('s3')
-bucket_name = 'studentlease-listing-images'
+bucket_name = 'studentlease-listing-images1'
+
 def fetch_s3_object_as_base64(key):
     try:
-        response = s3.get_object(Bucket='studentlease-listing-images', Key=key)
+        response = s3.get_object(Bucket=bucket_name, Key=key)
         print('fetch_s3_object_as_base64', response)
         binary_image_data = response['Body'].read()
         # Encode the binary image data into a Base64 string
@@ -27,9 +28,10 @@ def fetch_s3_object_as_base64(key):
         return None
 def lambda_handler(event, context):
     # Extract search parameters from the event
-    print('here')
+    print('event', event)
     search_params = event
     lat, lon = geocode_address(search_params['location'])
+    print('location', lat, lon)
     # Perform search in Elasticsearch
     body={
         "query": {
@@ -38,7 +40,7 @@ def lambda_handler(event, context):
                     {"match": {"bedrooms": search_params['bedrooms']}},
                     {"range": {"monthlyRent": {"lte": int(search_params['monthlyRent'])}}},
                     {"range": {"bathrooms": {"gte": int(search_params['bathrooms'])}}},
-                    {"range": {"dateAvailable": {"gte": search_params['dateAvailable']}}},
+                    # {"range": {"dateAvailable": {"gte": search_params['dateAvailable']}}},
                     {"range": {"leaseDuration": {"gte": search_params['leaseDuration']}}}
                 ],
                 "filter": {
@@ -87,11 +89,12 @@ def lambda_handler(event, context):
             # print('apartment_details', apartment_details)
 #     # Prepare response
     print('apartment_details', apartment_details)
-    # response = {
-    #     "statusCode": 200,
-    #     "body": json.dumps(apartment_details)
-    # }
-    return apartment_details
+    response = {
+        "statusCode": 200,
+        "body": json.dumps({'apartment_details': apartment_details})
+    }
+    return response
+    # return {'apartment_details': apartment_details}
 def geocode_address(address):
     geolocator = Photon(user_agent="myGeocoder")
     try:
