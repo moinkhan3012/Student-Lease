@@ -10,9 +10,10 @@ import uuid
 from decimal import Decimal
 
 dynamodb = boto3.resource('dynamodb')
-table_name = 'Listings'
+table_name = 'Marketplace'
 s3 = boto3.client('s3')
 bucket_name = 'studentlease-listing-images'
+rekognitionClient = boto3.client('rekognition')
 # google_maps_api_key = ''
 
 def lambda_handler(event, context):
@@ -29,13 +30,13 @@ def lambda_handler(event, context):
         if 'requestContext' in event:
             user_id = event['requestContext']['authorizer']['userId']  # Assuming user ID is included in the authorization context
         listing_id = request_body.get('id') or str(uuid.uuid4())
-        print("listing_id", listing_id)
         # Check if listing already exists
         existing_listing = get_listing(listing_id)
         print('existing_listing', existing_listing)
         if existing_listing:
             # Update existing listing
             updated_listing = update_listing(existing_listing, request_body, user_id)
+            # updated_listing = 
             print("updated_listing", updated_listing)
             update_index_listing(updated_listing)
             updated_listing['latitude'] = str(updated_listing['latitude'])
@@ -45,13 +46,11 @@ def lambda_handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps({'message': 'Listing updated successfully', 'listingId': listing_id})
             }
-            
-            
-            
-            
         else:
             # Create new listing
             new_listing = create_listing(request_body, listing_id, user_id)
+            # print(new_listing)
+            # return new_listing
             index_listing(new_listing)
             new_listing['latitude'] = str(new_listing['latitude'])
             new_listing['longitude'] = str(new_listing['longitude'])
@@ -73,8 +72,7 @@ def get_listing(listing_id):
     
 
 def update_index_listing(listing):
-    
-    url = 'https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_search'
+    url = 'https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/marketplace/_search'
     headers = {"Content-Type": "application/json"}
     body = {
         "size": 1,
@@ -94,50 +92,66 @@ def update_index_listing(listing):
             headers=headers,
             auth=HTTPBasicAuth('', '')
         )
-        print('update_index_listing _esResponse', response)
         sublet_id = response.json()['hits']['hits'][0]['_id']
-        print('sublet_id', sublet_id)
-        
+        print("sublet_id", sublet_id)
     except:
         print('Error calling Elastic Search while retrieving listing id')
-        
-        
-    esUrl = f"https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_update/{sublet_id}"
-
     
-    
+    esUrl = f"https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/marketplace/_update/{sublet_id}"
     headers = {"Content-Type": "application/json"}
     esDoc = {
         'id': listing['id'],
-        'monthlyRent': listing['monthlyRent'],
-        'leaseDuration': listing['leaseDuration'],
-        'bedrooms': int(listing['bedrooms']),
-        'bathrooms': int(listing['bathrooms']),
-        'dateAvailable': listing['dateAvailable'],
+        'price': listing['price'],
+        'labels': listing['labels'],
+        
         'location': {
             'lon': listing['longitude'],
             'lat': listing['latitude']
         }
     }
-    print(esDoc)
-    updated_data = {
+    updated_doc = {
         "doc": esDoc
     }
+    print(esDoc)
     response = requests.post(
         esUrl,
-        json = updated_data, 
+        json = updated_doc,
         # data=json.dumps(esDoc).encode("utf-8"),
         headers=headers,
         auth=HTTPBasicAuth('', '')
     )
     
-    print('final_es_response_update', response)
+def detectLabels(images):
+    labels = set()
+    for i in images:
+        image_binary = base64.b64decode(i)
+        response = rekognitionClient.detect_labels(
+                Image={
+                    'Bytes': image_binary
+                    
+                }, 
+                MaxLabels = 10
+                )
+        # print([j['Name'].lower() for j in response['Labels']])
+        for j in response['Labels']:
+            labels.add(j['Name'].lower())
+        # labels.add([j['Name'].lower() for j in response['Labels']])
+    return list(labels)
     
 def create_listing(request_body, listing_id, user_id):
     # Geocode address to get latitude and longitude
+    print('hello1') 
     latitude, longitude = geocode_address(request_body.get('address'))
     if latitude is None or longitude is None:
         raise Exception('Geocoding failed')
+        
+    labels = detectLabels(request_body.get('images', []))
+    print(labels)
+    # return {
+    #             'statusCode': 200,
+    #             'body': json.dumps({'message': labels})
+    #         }
+    
     # Upload images to S3 bucket and get URLs
     image_urls = upload_images(request_body.get('images', []))
     print('image_urls', image_urls)
@@ -149,33 +163,22 @@ def create_listing(request_body, listing_id, user_id):
         'address': request_body.get('address', None),
         'latitude': latitude,
         'longitude': longitude,
-        'monthlyRent': request_body.get('monthlyRent', None),
-        'roomType': request_body.get('roomType', None),
-        'securityDeposit': request_body.get('securityDeposit', None),
-        'bedrooms': request_body.get('bedrooms', None),
-        'bathrooms': request_body.get('bathrooms', None),
-        'squareFeet': request_body.get('squareFeet', None),
-        'dateAvailable': request_body.get('dateAvailable', None),
-        'leaseDuration': request_body.get('leaseDuration', None),
+        'price': request_body.get('price', None),
         'images': image_urls,
-        'amenities': request_body.get('amenities', {}),
-        'preferences': request_body.get('preferences', {}),
-        'detailedDescription': request_body.get('detailedDescription', None)
+        'detailedDescription': request_body.get('detailedDescription', None),
+        'labels': labels
     }
     return listing_item
     
 def index_listing(listing):
     # https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.us-east-1.es.amazonaws.com
-    esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_doc"
+    esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/marketplace/_doc"
     headers = {"Content-Type": "application/json"}
     esDoc = {
         'id': listing['id'],
-        'monthlyRent': listing['monthlyRent'],
-        'leaseDuration': listing['leaseDuration'],
-        'bedrooms': listing['bedrooms'],
-        'bathrooms': listing['bathrooms'],
-        'dateAvailable': listing['dateAvailable'],
-
+        'price': listing['price'],
+        
+        'labels': listing['labels'],
         'location': {
             'lon': listing['longitude'],
             'lat': listing['latitude']
@@ -188,37 +191,42 @@ def index_listing(listing):
         headers=headers,
         auth=HTTPBasicAuth('', '')
     )
-    print('es_response', response)
+    print(response)
 
 def update_listing(existing_listing, request_body, user_id):
     # Update existing listing attributes
     existing_listing['title'] = request_body.get('title')
     existing_listing['address'] = request_body.get('address', None)
-    # Geocode address to get latitude and longitude
+    
     latitude, longitude = geocode_address(request_body.get('address'))
-    latitude, longitude = geocode_address(request_body.get('address'))
-    if latitude is not None and longitude is not None:
-        existing_listing['latitude'] = latitude
-        existing_listing['longitude'] = longitude
-    # Upload new images to S3 bucket and update image URLs
+    if latitude is None or longitude is None:
+        raise Exception('Geocoding failed')
+        
+    new_labels = detectLabels(request_body.get('images', []))
+    unique_labels = [i for i in new_labels if i not in existing_listing['labels']]
+    print(new_labels) 
+    
     new_image_urls = upload_images(request_body.get('images', []))
     existing_listing['images'].extend(new_image_urls)
     
+    existing_listing['latitude'] = latitude
+    existing_listing['longitude'] = longitude
+    
+    # Upload images to S3 bucket and get URLs
+    # image_urls = upload_images(request_body.get('images', []))
+    # print('image_urls', image_urls)
+    # Construct the item to be inserted into DynamoDB
+    
+    existing_listing['price'] = request_body.get('price', None)
+    
+    existing_listing['detailedDescription']: request_body.get('detailedDescription', None)
+    existing_listing['labels'].extend(unique_labels) 
     
     
-    existing_listing['address'] = request_body.get('address', None)
-    existing_listing['monthlyRent'] = request_body.get('monthlyRent', None)
-    existing_listing['roomType'] = request_body.get('roomType', None)
-    existing_listing['bathrooms'] = request_body.get('bathrooms', None)
-    existing_listing['bedrooms'] = request_body.get('bedrooms', None)
-    existing_listing['squareFeet'] = request_body.get('squareFeet', None)
-    existing_listing['dateAvailable'] = request_body.get('dateAvailable', None)
-    existing_listing['leaseDuration'] = request_body.get('leaseDuration', None)
-    existing_listing['amenities'] = request_body.get('amenities', {})
-    existing_listing['preferences'] = request_body.get('preferences', {})
-    existing_listing['detailedDescription'] = request_body.get('detailedDescription', None)
-    existing_listing['securityDeposit'] = request_body.get('securityDeposit', None)
-        
+    
+    
+    
+    
     return existing_listing
 
 def save_listing(listing_item):
