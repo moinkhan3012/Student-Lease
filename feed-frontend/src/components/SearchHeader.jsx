@@ -3,15 +3,21 @@ import { useState } from "react";
 import { logout } from "../utils";
 import "../styles/search-header.css";
 
-const SearchHeader = ({ onClick }) => {
+const SearchHeader = ({ onClick, isSublet }) => {
   const navigate = useNavigate();
   const [showLogoutButton, setShowLogoutButton] = useState(false);
-  const [searchQuery, setSearchQuery] = useState({
-    address: "",
-    bedroom: "",
-    bathroom: "",
+  const [listingSearchQuery, setListingSearchQuery] = useState({
+    location: "",
+    bedrooms: "",
+    bathrooms: "",
+    monthlyRent: "",
     dateAvailable: "",
     leaseDuration: "",
+  });
+  const [marketplacesearchQuery, setMarketplaceSearchQuery] = useState({
+    location: "",
+    price: "",
+    label: "",
   });
   return (
     <>
@@ -21,14 +27,23 @@ const SearchHeader = ({ onClick }) => {
             className='address-search'
             type='text'
             placeholder='Search address...'
-            onChange={(e) =>
-              setSearchQuery({
-                ...searchQuery,
-                address: e.target.value,
-              })
-            }
+            onChange={(e) => {
+              setListingSearchQuery({
+                ...listingSearchQuery,
+                location: e.target.value,
+              });
+              setMarketplaceSearchQuery({
+                ...marketplacesearchQuery,
+                location: e.target.value,
+              });
+            }}
           />
-          <span className='btn-search' onClick={() => onClick(searchQuery)}>
+          <span
+            className='btn-search'
+            onClick={() =>
+              onClick(isSublet ? listingSearchQuery : marketplacesearchQuery)
+            }
+          >
             Search
           </span>
         </div>
@@ -55,78 +70,105 @@ const SearchHeader = ({ onClick }) => {
       </div>
       <div className='filters-container-parent'>
         <div className='txt-filters'>Filters</div>
-        <div className='filters-container'>
-          <div className='filter-container bedroom-filter'>
-            <div
-              className='filter-title'
-              onChange={(e) =>
-                setSearchQuery({
-                  ...searchQuery,
-                  bedroom: e.target.value,
-                })
-              }
-            >
-              Bedrooms
+        {isSublet && (
+          <div className='filters-container'>
+            <div className='filter-container bedroom-filter'>
+              <div className='filter-title'>Bedrooms</div>
+              <input
+                type='text'
+                className='txt-bedrooms'
+                onChange={(e) =>
+                  setListingSearchQuery({
+                    ...listingSearchQuery,
+                    bedrooms: e.target.value,
+                  })
+                }
+              />
             </div>
-            <input type='text' className='txt-bedrooms' />
-          </div>
-          <div className='filter-container bathroom-filter'>
-            <div
-              className='filter-title'
-              onChange={(e) =>
-                setSearchQuery({
-                  ...searchQuery,
-                  bathroom: e.target.value,
-                })
-              }
-            >
-              Bathrooms
+            <div className='filter-container bathroom-filter'>
+              <div className='filter-title'>Bathrooms</div>
+              <input
+                type='text'
+                className='txt-bathrooms'
+                onChange={(e) =>
+                  setListingSearchQuery({
+                    ...listingSearchQuery,
+                    bathrooms: e.target.value,
+                  })
+                }
+              />
             </div>
-            <input type='text' className='txt-bathrooms' />
-          </div>
-          <div className='filter-container monthlyRent-filter'>
-            <div
-              className='filter-title'
-              onChange={(e) =>
-                setSearchQuery({
-                  ...searchQuery,
-                  monthlyRent: e.target.value,
-                })
-              }
-            >
-              Monthly rent
+            <div className='filter-container monthlyRent-filter'>
+              <div className='filter-title'>Monthly rent</div>
+              <input
+                type='text'
+                className='txt-monthlyRent'
+                onChange={(e) =>
+                  setListingSearchQuery({
+                    ...listingSearchQuery,
+                    monthlyRent: e.target.value,
+                  })
+                }
+              />
             </div>
-            <input type='text' className='txt-monthlyRent' />
-          </div>
-          <div className='filter-container dateAvailable-filter'>
-            <div
-              className='filter-title'
-              onChange={(e) =>
-                setSearchQuery({
-                  ...searchQuery,
-                  dateAvailable: e.target.value,
-                })
-              }
-            >
-              Date available
+            <div className='filter-container dateAvailable-filter'>
+              <div className='filter-title'>Date available</div>
+              <input
+                type='date'
+                className='txt-dateAvailable'
+                onChange={(e) =>
+                  setListingSearchQuery({
+                    ...listingSearchQuery,
+                    dateAvailable: e.target.value,
+                  })
+                }
+              />
             </div>
-            <input type='date' className='txt-dateAvailable' />
-          </div>
-          <div className='filter-container duration-filter'>
-            <div
-              className='filter-title'
-              onChange={(e) =>
-                setSearchQuery({
-                  ...searchQuery,
-                  leaseDuration: e.target.value,
-                })
-              }
-            >
-              Lease duration (in months)
+            <div className='filter-container duration-filter'>
+              <div className='filter-title'>Lease duration (in months)</div>
+              <input
+                type='text'
+                className='txt-leaseDuration'
+                onChange={(e) =>
+                  setListingSearchQuery({
+                    ...listingSearchQuery,
+                    leaseDuration: e.target.value,
+                  })
+                }
+              />
             </div>
-            <input type='text' className='txt-leaseDuration' />
           </div>
-        </div>
+        )}
+        {!isSublet && (
+          <div className='filters-container'>
+            <div className='filter-container price-filter'>
+              <div className='filter-title'>Price</div>
+              <input
+                type='text'
+                className='txt-price'
+                onChange={(e) =>
+                  setMarketplaceSearchQuery({
+                    ...marketplacesearchQuery,
+                    price: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className='filter-container label-filter'>
+              <div className='filter-title'>Label</div>
+              <input
+                type='text'
+                className='txt-label'
+                onChange={(e) =>
+                  setMarketplaceSearchQuery({
+                    ...marketplacesearchQuery,
+                    label: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

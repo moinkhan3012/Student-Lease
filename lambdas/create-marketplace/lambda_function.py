@@ -12,12 +12,11 @@ from decimal import Decimal
 dynamodb = boto3.resource('dynamodb')
 table_name = 'Marketplace'
 s3 = boto3.client('s3')
-bucket_name = 'studentlease-listing-images'
+bucket_name = 'studentlease-listing-images1'
 rekognitionClient = boto3.client('rekognition')
-# google_maps_api_key = ''
 
 def lambda_handler(event, context):
-    # print('event', event)
+        print('event', event)
     # try:
         request_body = event
         
@@ -90,7 +89,7 @@ def update_index_listing(listing):
             url,
             data=json.dumps(body),
             headers=headers,
-            auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('', '')
         )
         sublet_id = response.json()['hits']['hits'][0]['_id']
         print("sublet_id", sublet_id)
@@ -103,7 +102,6 @@ def update_index_listing(listing):
         'id': listing['id'],
         'price': listing['price'],
         'labels': listing['labels'],
-        
         'location': {
             'lon': listing['longitude'],
             'lat': listing['latitude']
@@ -118,7 +116,7 @@ def update_index_listing(listing):
         json = updated_doc,
         # data=json.dumps(esDoc).encode("utf-8"),
         headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
     )
     
 def detectLabels(images):
@@ -128,7 +126,6 @@ def detectLabels(images):
         response = rekognitionClient.detect_labels(
                 Image={
                     'Bytes': image_binary
-                    
                 }, 
                 MaxLabels = 10
                 )
@@ -140,17 +137,12 @@ def detectLabels(images):
     
 def create_listing(request_body, listing_id, user_id):
     # Geocode address to get latitude and longitude
-    print('hello1') 
     latitude, longitude = geocode_address(request_body.get('address'))
     if latitude is None or longitude is None:
         raise Exception('Geocoding failed')
         
     labels = detectLabels(request_body.get('images', []))
     print(labels)
-    # return {
-    #             'statusCode': 200,
-    #             'body': json.dumps({'message': labels})
-    #         }
     
     # Upload images to S3 bucket and get URLs
     image_urls = upload_images(request_body.get('images', []))
@@ -177,7 +169,6 @@ def index_listing(listing):
     esDoc = {
         'id': listing['id'],
         'price': listing['price'],
-        
         'labels': listing['labels'],
         'location': {
             'lon': listing['longitude'],
@@ -189,7 +180,7 @@ def index_listing(listing):
         esUrl,
         data=json.dumps(esDoc).encode("utf-8"),
         headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
     )
     print(response)
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getBase64 } from "../utils";
 import "../styles/header.css";
 import "../styles/property-listing.css";
+import { CREATE_SUBLET_URL } from "../constants";
 
 const PropertyListing = () => {
   useEffect(() => {
@@ -45,13 +46,13 @@ const PropertyListing = () => {
   };
   const createListing = () => {
     const reqBody = {
-      monthlyRent: monthlyRent,
-      securityDeposit: securityDeposit,
-      bedrooms: bedrooms,
-      bathrooms: bathrooms,
-      squareFeet: area,
+      monthlyRent: parseInt(monthlyRent),
+      securityDeposit: parseInt(securityDeposit),
+      bedrooms: parseInt(bedrooms),
+      bathrooms: parseInt(bathrooms),
+      squareFeet: parseInt(area),
       dateAvailable: dateAvailable,
-      leaseDuration: leaseDuration,
+      leaseDuration: parseInt(leaseDuration),
       amenities: {
         laundry: laundry,
         ac: ac,
@@ -78,16 +79,13 @@ const PropertyListing = () => {
       title: address + ", " + unitNumber,
     };
     console.log("Request body:", reqBody);
-    fetch(
-      "https://403qyxndg3.execute-api.us-east-1.amazonaws.com/dev/studentLease/create-sublet/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ reqBody }),
-      }
-    )
+    fetch(CREATE_SUBLET_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reqBody }),
+    })
       .then((res) => {
         res
           .json()

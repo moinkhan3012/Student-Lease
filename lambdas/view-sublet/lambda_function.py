@@ -94,13 +94,12 @@ def lambda_handler(event, context):
             apartment_details.append(apartment_info)
             # print('apartment_details', apartment_details)
 #     # Prepare response
-    print('apartment_details', apartment_details)
+    print('details', apartment_details)
     response = {
         "statusCode": 200,
-        "body": json.dumps({'apartment_details': apartment_details})
+        "body": json.dumps({'details': apartment_details})
     }
     return response
-    # return {'apartment_details': apartment_details}
 def geocode_address(address):
     geolocator = Photon(user_agent="myGeocoder")
     try:

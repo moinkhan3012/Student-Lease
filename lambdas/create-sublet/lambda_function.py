@@ -12,15 +12,14 @@ from decimal import Decimal
 dynamodb = boto3.resource('dynamodb')
 table_name = 'Listings'
 s3 = boto3.client('s3')
-bucket_name = 'studentlease-listing-images'
-# google_maps_api_key = ''
+bucket_name = 'studentlease-listing-images1'
 
 def lambda_handler(event, context):
-    # print('event', event)
+        print('event', event)
     # try:
-        request_body = event
-        
+        request_body = event['reqBody']
         if 'title' not in request_body:
+            print('no title in request_body')
             return {
                 'statusCode': 400,
                 'body': json.dumps({'message': 'Title is required'})
@@ -29,29 +28,17 @@ def lambda_handler(event, context):
         if 'requestContext' in event:
             user_id = event['requestContext']['authorizer']['userId']  # Assuming user ID is included in the authorization context
         listing_id = request_body.get('id') or str(uuid.uuid4())
-        print("listing_id", listing_id)
         # Check if listing already exists
         existing_listing = get_listing(listing_id)
-        print('existing_listing', existing_listing)
         if existing_listing:
             # Update existing listing
             updated_listing = update_listing(existing_listing, request_body, user_id)
-            print("updated_listing", updated_listing)
-            update_index_listing(updated_listing)
-            updated_listing['latitude'] = str(updated_listing['latitude'])
-            updated_listing['longitude'] = str(updated_listing['longitude'])
             save_listing(updated_listing)
-            return {
-                'statusCode': 200,
-                'body': json.dumps({'message': 'Listing updated successfully', 'listingId': listing_id})
-            }
-            
-            
-            
-            
+            update_index_listing(updated_listing)
         else:
             # Create new listing
             new_listing = create_listing(request_body, listing_id, user_id)
+            print('new_listing', new_listing)
             index_listing(new_listing)
             new_listing['latitude'] = str(new_listing['latitude'])
             new_listing['longitude'] = str(new_listing['longitude'])
@@ -70,11 +57,8 @@ def get_listing(listing_id):
     table = dynamodb.Table(table_name)
     response = table.get_item(Key={'id': listing_id})
     return response.get('Item')
-    
-
 def update_index_listing(listing):
-    
-    url = 'https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_search'
+    url = 'https://search-test-elastic-ku7jpzixjyqgxg5oqye5fskm3u.aos.us-east-1.on.aws/sublets/_search'
     headers = {"Content-Type": "application/json"}
     body = {
         "size": 1,
@@ -94,25 +78,17 @@ def update_index_listing(listing):
             headers=headers,
             auth=HTTPBasicAuth('', '')
         )
-        print('update_index_listing _esResponse', response)
-        sublet_id = response.json()['hits']['hits'][0]['_id']
-        print('sublet_id', sublet_id)
-        
-    except:
+        sublet_id = response.json()['hits']['hits']['_source']['id']
+    except e:
         print('Error calling Elastic Search while retrieving listing id')
-        
-        
-    esUrl = f"https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_update/{sublet_id}"
-
-    
-    
+    esUrl = f"https://search-test-elastic-ku7jpzixjyqgxg5oqye5fskm3u.aos.us-east-1.on.aws/sublets/_update/{sublet_id}"
     headers = {"Content-Type": "application/json"}
     esDoc = {
         'id': listing['id'],
         'monthlyRent': listing['monthlyRent'],
         'leaseDuration': listing['leaseDuration'],
-        'bedrooms': int(listing['bedrooms']),
-        'bathrooms': int(listing['bathrooms']),
+        'bedrooms': listing['bedrooms'],
+        'bathrooms': listing['bathrooms'],
         'dateAvailable': listing['dateAvailable'],
         'location': {
             'lon': listing['longitude'],
@@ -120,19 +96,12 @@ def update_index_listing(listing):
         }
     }
     print(esDoc)
-    updated_data = {
-        "doc": esDoc
-    }
     response = requests.post(
         esUrl,
-        json = updated_data, 
-        # data=json.dumps(esDoc).encode("utf-8"),
+        data=json.dumps(esDoc).encode("utf-8"),
         headers=headers,
         auth=HTTPBasicAuth('', '')
     )
-    
-    print('final_es_response_update', response)
-    
 def create_listing(request_body, listing_id, user_id):
     # Geocode address to get latitude and longitude
     latitude, longitude = geocode_address(request_body.get('address'))
@@ -163,7 +132,6 @@ def create_listing(request_body, listing_id, user_id):
         'detailedDescription': request_body.get('detailedDescription', None)
     }
     return listing_item
-    
 def index_listing(listing):
     # https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.us-east-1.es.amazonaws.com
     esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_doc"
@@ -175,7 +143,6 @@ def index_listing(listing):
         'bedrooms': listing['bedrooms'],
         'bathrooms': listing['bathrooms'],
         'dateAvailable': listing['dateAvailable'],
-
         'location': {
             'lon': listing['longitude'],
             'lat': listing['latitude']
@@ -188,14 +155,12 @@ def index_listing(listing):
         headers=headers,
         auth=HTTPBasicAuth('', '')
     )
-    print('es_response', response)
-
+    print(response)
 def update_listing(existing_listing, request_body, user_id):
     # Update existing listing attributes
     existing_listing['title'] = request_body.get('title')
     existing_listing['address'] = request_body.get('address', None)
     # Geocode address to get latitude and longitude
-    latitude, longitude = geocode_address(request_body.get('address'))
     latitude, longitude = geocode_address(request_body.get('address'))
     if latitude is not None and longitude is not None:
         existing_listing['latitude'] = latitude
@@ -203,28 +168,10 @@ def update_listing(existing_listing, request_body, user_id):
     # Upload new images to S3 bucket and update image URLs
     new_image_urls = upload_images(request_body.get('images', []))
     existing_listing['images'].extend(new_image_urls)
-    
-    
-    
-    existing_listing['address'] = request_body.get('address', None)
-    existing_listing['monthlyRent'] = request_body.get('monthlyRent', None)
-    existing_listing['roomType'] = request_body.get('roomType', None)
-    existing_listing['bathrooms'] = request_body.get('bathrooms', None)
-    existing_listing['bedrooms'] = request_body.get('bedrooms', None)
-    existing_listing['squareFeet'] = request_body.get('squareFeet', None)
-    existing_listing['dateAvailable'] = request_body.get('dateAvailable', None)
-    existing_listing['leaseDuration'] = request_body.get('leaseDuration', None)
-    existing_listing['amenities'] = request_body.get('amenities', {})
-    existing_listing['preferences'] = request_body.get('preferences', {})
-    existing_listing['detailedDescription'] = request_body.get('detailedDescription', None)
-    existing_listing['securityDeposit'] = request_body.get('securityDeposit', None)
-        
     return existing_listing
-
 def save_listing(listing_item):
     # Save the listing item to DynamoDB
     dynamodb.Table(table_name).put_item(Item=listing_item)
-
 def geocode_address(address):
     geolocator = Photon(user_agent="myGeocoder")
     try:
@@ -236,15 +183,10 @@ def geocode_address(address):
     except GeocoderTimedOut:
         print("Geocoding service timed out")
         return None, None
-    
 def upload_images(images):
     image_urls = []
-    
     for image_data in images:
-        
         binary_data = base64.b64decode(image_data)
-        
-        
         mime_type = None
         if binary_data.startswith(b'\xFF\xD8'):
             mime_type = 'image/jpeg'
@@ -253,21 +195,15 @@ def upload_images(images):
         else:
             print('Unsupported file format.')
             continue
-        
         file_extension = '.jpg' if mime_type == 'image/jpeg' else '.png'
-
-        
         image_key = str(uuid.uuid4()) + file_extension  # Generate a unique key for the image
-        
         try:
             response = s3.put_object(Body=binary_data, Bucket=bucket_name, Key=image_key)
             image_url = f"https://{bucket_name}.s3.amazonaws.com/{image_key}"  # Construct the URL of the uploaded image
             image_urls.append(image_url)
             print("s3response", response)
             print("image_urls", image_urls)
-            
         except Exception as e:
             print('Error uploading file to S3: {}'.format(str(e)))
             # return image_urls
-            
     return image_urls

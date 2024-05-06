@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 import boto3
 import requests
 import base64
@@ -8,17 +8,17 @@ from geopy.geocoders import Photon
 from geopy.exc import GeocoderTimedOut
 from boto3.dynamodb.conditions import Key
 import io
-# https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws
+
 esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/marketplace/_search"
 dynamo = boto3.resource('dynamodb')
 dynamodb = dynamo.Table('Marketplace')
 s3 = boto3.client('s3')
-bucket_name = 'studentlease-listing-images'
+bucket_name = 'studentlease-listing-images1'
 
 def fetch_s3_object_as_base64(key):
     try:
         
-        response = s3.get_object(Bucket='studentlease-listing-images', Key=key)
+        response = s3.get_object(Bucket=bucket_name, Key=key)
         print('fetch_s3_object_as_base64', response)
         binary_image_data = response['Body'].read()
 
@@ -32,7 +32,7 @@ def fetch_s3_object_as_base64(key):
 
 def lambda_handler(event, context):
     # Extract search parameters from the event
-    print('here')
+    print('event', event)
     search_params = event
     lat, lon = geocode_address(search_params['location'])
     # Perform search in Elasticsearch
@@ -89,12 +89,12 @@ def lambda_handler(event, context):
             apartment_details.append(apartment_info)
             # print('apartment_details', apartment_details)
 #     # Prepare response
-    print('apartment_details', apartment_details)
-    # response = {
-    #     "statusCode": 200,
-    #     "body": json.dumps(apartment_details)
-    # }
-    return apartment_details
+    print('details', apartment_details)
+    response = {
+        "statusCode": 200,
+        "body": json.dumps({'details': apartment_details})
+    }
+    return response
     
     
 def geocode_address(address):
