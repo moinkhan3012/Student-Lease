@@ -9,14 +9,15 @@ from geopy.exc import GeocoderTimedOut
 from boto3.dynamodb.conditions import Key
 import io
 
-esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_search"
+esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/marketplace/_search"
 dynamo = boto3.resource('dynamodb')
-dynamodb = dynamo.Table('Listings')
+dynamodb = dynamo.Table('Marketplace')
 s3 = boto3.client('s3')
 bucket_name = 'studentlease-listing-images1'
 
 def fetch_s3_object_as_base64(key):
     try:
+        
         response = s3.get_object(Bucket=bucket_name, Key=key)
         print('fetch_s3_object_as_base64', response)
         binary_image_data = response['Body'].read()
@@ -34,19 +35,14 @@ def lambda_handler(event, context):
     print('event', event)
     search_params = event
     lat, lon = geocode_address(search_params['location'])
-    print('location', lat, lon)
     # Perform search in Elasticsearch
     body={
-        "_source": ['id'],
-
         "query": {
             "bool": {
                 "must": [
-                    {"match": {"bedrooms": search_params['bedrooms']}},
-                    {"range": {"monthlyRent": {"lte": int(search_params['monthlyRent'])}}},
-                    {"range": {"bathrooms": {"gte": int(search_params['bathrooms'])}}},
-                    # {"range": {"dateAvailable": {"gte": search_params['dateAvailable']}}},
-                    {"range": {"leaseDuration": {"gte": search_params['leaseDuration']}}}
+                    {"match": {"labels": search_params['label']}},
+                    {"range": {"price": {"lte": int(search_params['price'])}}}
+                    
                 ],
                 "filter": {
                     "geo_distance": {
@@ -67,7 +63,6 @@ def lambda_handler(event, context):
         headers=headers,
         auth=HTTPBasicAuth('', '')
     )
-    
     # # Extract apartment IDs from search results
     print('search_result', search_result.json())
     apartment_details = []
@@ -100,6 +95,8 @@ def lambda_handler(event, context):
         "body": json.dumps({'details': apartment_details})
     }
     return response
+    
+    
 def geocode_address(address):
     geolocator = Photon(user_agent="myGeocoder")
     try:

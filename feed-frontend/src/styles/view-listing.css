@@ -1,13 +1,40 @@
 .view-container {
   display: flex;
   margin-top: 30px;
+  box-sizing: border-box;
   padding: 30px;
-}
-.listing-view-info {
   width: 100%;
 }
-.listing-view-images > img {
+.listing-view-info {
+  width: 50%;
+}
+#listing-image {
   height: 350px;
+}
+.listing-view-images {
+  position: relative;
+  width: 50%;
+  text-align: center;
+}
+#scroll-listing-image-right,
+#scroll-listing-image-left {
+  height: 20px;
+  position: absolute;
+  padding: 10px 5px;
+  top: 45%;
+  transition: ease-in-out 100ms;
+  background-color: black;
+  border-radius: 5px;
+}
+.listing-image-scroll:hover {
+  cursor: pointer;
+  /* background-color: rgba(0, 0, 0, 0.8); */
+}
+#scroll-listing-image-right {
+  right: 0;
+}
+#scroll-listing-image-left {
+  left: 0;
 }
 .listing-view-info {
   padding: 20px;

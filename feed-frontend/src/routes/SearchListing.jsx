@@ -1,42 +1,52 @@
 import { useEffect, useState } from "react";
-import SearchHeader from "../components/SearchHeader";
-import Listing from "../components/Listing";
+import { SearchHeader, Listing } from "../components";
+import { VIEW_MARKETPLACE_URL, VIEW_SUBLET_URL } from "../constants";
 import "../styles/search-listing.css";
 
 const SearchListing = () => {
   const [subletOrMarketplace, setSubletOrMarketplace] = useState("sublets");
-  let [listingDetails, setListingDetails] = useState([]);
-
-  const searchListings = (searchQuery) => {
-    console.log(searchQuery);
-    fetch(
-      "http://localhost:5000?" +
-        new URLSearchParams({
-          ...searchQuery,
-          subletOrMarketplace: subletOrMarketplace,
-        })
-    )
-      .then((res) =>
-        res.json().then((data) => setListingDetails(data.listings))
-      )
-      .catch((err) => console.log("Failed to fetch listings from server"));
-  };
+  const [listingDetails, setListingDetails] = useState([]);
 
   useEffect(() => {
     document.title = "Student Lease | Search listings";
-    // TODO: Make a request with filters to fetch listing details
-    fetch("http://localhost:5000")
-      .then((res) =>
-        res.json().then((data) => setListingDetails(data.listings))
-      )
-      .catch((err) => console.log("Failed to fetch listings from server"));
   }, []);
-  useEffect(() => {
-    // console.log("changed to", subletOrMarketplace);
-  }, [subletOrMarketplace]);
+  const searchListings = (searchQuery) => {
+    const searchListingsUrl =
+      subletOrMarketplace == "sublets" ? VIEW_SUBLET_URL : VIEW_MARKETPLACE_URL;
+    console.log("search query", searchQuery);
+
+    fetch(searchListingsUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(searchQuery),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        let listingArray = [];
+        console.log(
+          `${
+            subletOrMarketplace == "sublets" ? "sublet" : "marketplace item"
+          } details`,
+          JSON.parse(data.body)["details"]
+        );
+        JSON.parse(data.body)["details"].forEach((listing) => {
+          listingArray.push(listing);
+        });
+        setListingDetails(listingArray);
+      })
+      .catch((error) =>
+        console.log(`Error while fetching ${subletOrMarketplace}`, error)
+      );
+  };
+
   return (
     <>
-      <SearchHeader onClick={searchListings} />
+      <SearchHeader
+        onClick={searchListings}
+        isSublet={subletOrMarketplace == "sublets"}
+      />
       <div className='listing-info'>
         <div className='listing-count'>
           {listingDetails.length} {subletOrMarketplace}
@@ -45,7 +55,10 @@ const SearchListing = () => {
           <select
             name=''
             className='nearby-listings-title'
-            onChange={(e) => setSubletOrMarketplace(e.target.value)}
+            onChange={(e) => {
+              setSubletOrMarketplace(e.target.value);
+              setListingDetails([]);
+            }}
           >
             <option value='sublets'>Sublets</option>
             <option value='items'>Items</option>
@@ -56,10 +69,10 @@ const SearchListing = () => {
           Select property for further details
         </div>
         {listingDetails.length > 0 &&
-          listingDetails.map((details) => {
+          listingDetails.map((details, index) => {
             return (
               <Listing
-                key={details.id}
+                key={index}
                 listingDetails={details}
                 isSublet={subletOrMarketplace == "sublets"}
               />

@@ -1,12 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Header, Footer } from "../components";
 import { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import getBase64 from "../utils/getBase64";
+import { getBase64 } from "../utils";
+import { CREATE_MARKETPLACE_URL } from "../constants";
 import "../styles/marketplace-listing.css";
 
 const MarketplaceListing = () => {
-  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [price, setPrice] = useState("");
@@ -24,28 +22,22 @@ const MarketplaceListing = () => {
       title: title,
       address: address,
       price: price,
-      description: description,
+      detailedDescription: description,
       images: images,
     };
     console.log("request body:", reqBody);
-    // fetch(
-    //   "",
-    //   {
-    //     method: "POST",
-    //     mode: "no-cors",
-    //     headers: {
-    //       "Access-Control-Allow-Origin": "*",
-    //       "Access-Control-Allow-Headers": "*",
-    //       "Access-Control-Allow-Methods": "*",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ reqBody }),
-    //   }
-    // )
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((error) => console.log("Error while processing", error));
+    fetch(CREATE_MARKETPLACE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log("Response", data))
+      .catch((error) =>
+        console.log("Error while creating marketplace listing", error)
+      );
   };
   return (
     <>

@@ -1,17 +1,18 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import { Header, Footer } from "../components";
+import { useEffect, useState } from "react";
+import { getBase64 } from "../utils";
 import "../styles/header.css";
 import "../styles/property-listing.css";
-import Footer from "../components/Footer";
-import { useEffect, useState } from "react";
-import getBase64 from "../utils/getBase64";
+import { CREATE_SUBLET_URL } from "../constants";
+
 const PropertyListing = () => {
   useEffect(() => {
     document.title = "Student Lease | Add property details";
   });
+  const navigate = useNavigate();
   const { state } = useLocation();
   const { address, unitNumber, propertyType } = state;
-  const navigate = useNavigate();
   const [monthlyRent, setMonthlyRent] = useState("0");
   const [securityDeposit, setSecurityDeposit] = useState("0");
   const [bedrooms, setBedrooms] = useState("0");
@@ -45,13 +46,13 @@ const PropertyListing = () => {
   };
   const createListing = () => {
     const reqBody = {
-      monthlyRent: monthlyRent,
-      securityDeposit: securityDeposit,
-      bedrooms: bedrooms,
-      bathrooms: bathrooms,
-      squareFeet: area,
+      monthlyRent: parseInt(monthlyRent),
+      securityDeposit: parseInt(securityDeposit),
+      bedrooms: parseInt(bedrooms),
+      bathrooms: parseInt(bathrooms),
+      squareFeet: parseInt(area),
       dateAvailable: dateAvailable,
-      leaseDuration: leaseDuration,
+      leaseDuration: parseInt(leaseDuration),
       amenities: {
         laundry: laundry,
         ac: ac,
@@ -78,22 +79,17 @@ const PropertyListing = () => {
       title: address + ", " + unitNumber,
     };
     console.log("Request body:", reqBody);
-    fetch(
-      "https://403qyxndg3.execute-api.us-east-1.amazonaws.com/dev/studentLease/create-sublet/",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "*",
-          "Access-Control-Allow-Methods": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ reqBody }),
-      }
-    )
+    fetch(CREATE_SUBLET_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reqBody }),
+    })
       .then((res) => {
-        console.log(res);
+        res
+          .json()
+          .then((data) => console.log("Response body", JSON.parse(data.body)));
       })
       .catch((error) => console.log("Error while processing", error));
   };

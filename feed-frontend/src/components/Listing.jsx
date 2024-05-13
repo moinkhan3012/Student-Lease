@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/listing.css";
 
 const Listing = ({ listingDetails, isSublet }) => {
+  console.log("listing details", listingDetails);
+  const image = listingDetails.base64_images[0];
   const navigate = useNavigate();
   let bedsAndDistance;
   if (isSublet) {
@@ -22,34 +24,41 @@ const Listing = ({ listingDetails, isSublet }) => {
     // TODO: Update like unlike in database
   };
   const viewSublease = () => {
-    console.log(listingDetails.id);
-    // navigate("/view-sublease", { state: { id: listingDetails.id } });
+    navigate("/view-listing", {
+      state: { listingDetails: listingDetails, isSublet: isSublet },
+    });
   };
   return (
     <>
-      <div className='listing-container'>
+      <div className='listing-container' onClick={viewSublease}>
         <img
           className='listing-image'
-          src={require("../resources/home.png")}
+          src={`data:image/png;base64,${image}`}
           alt='listing image'
         />
         <div id='listing-details-container'>
           <div className='listing-address'>{listingDetails.address}</div>
-          <div className='beds-and-distance'>{bedsAndDistance}</div>
-          <div className='listing-dateAvailable'>
-            Date available: {isSublet && listingDetails.dateAvailable}
+          <div className='beds-and-distance'>
+            {isSublet ? bedsAndDistance : listingDetails.title}
           </div>
+          {isSublet && (
+            <div className='listing-dateAvailable'>
+              Date available: {listingDetails.dateAvailable}
+            </div>
+          )}
           <div className='monthlyRent'>
-            {isSublet && "$" + listingDetails.monthlyRent + "/month"}
+            {isSublet
+              ? "$" + listingDetails.monthlyRent + "/month"
+              : "$" + listingDetails.price}
           </div>
-          <img
+          {/* <img
             src={require(isLiked
               ? "../resources/logo-liked.png"
               : "../resources/logo-like.png")}
             alt=''
             className='like-button'
             onClick={likeUnlike}
-          />
+          /> */}
         </div>
       </div>
     </>
