@@ -2,7 +2,7 @@ from elasticsearch.helpers import bulk
 from elasticsearch import Elasticsearch
 
 class ElasticSearchWrapper:
-    def __init__(self, host, ca_certs, http_auth: iter):
+    def __init__(self, host, http_auth: iter):
         """
         Initialize the ElasticSearchWrapper.
 
@@ -15,10 +15,11 @@ class ElasticSearchWrapper:
             None
         """
         self.client = Elasticsearch(
-            host,
-            ca_certs=ca_certs,
-            http_auth=http_auth
-        )
+                host,
+                http_auth=http_auth,
+                use_ssl=True,
+                verify_certs=False  # Not recommended for production use
+            )
         
     def create_index(self, index, properties):
         """
@@ -94,14 +95,19 @@ class ElasticSearchWrapper:
             dict: The search results.
         """
         search_query = {
-            "knn": {
-                    'field': 'embedding',
-                    'query_vector': query_vector,
-                    'num_candidates': num_candidates,
-                    'k': k,
+            "size": num_candidates,
+            "query": {
+                "knn": {
+                    "embedding": {
+                    "vector": query_vector,
+                    "k": k
+                    }
+                }
             },
-            "stored_fields": stored_fields,
-        }
+            "_source": False,
+            "fields": stored_fields
+        }    
+
             
         return self.client.search(index=index, body=search_query)
     
@@ -131,10 +137,12 @@ class ElasticSearchWrapper:
         Returns:
             dict: The search results.
         """
+        
         query_template = {
+            "_source": ["embedding"],
             "query": {
                 "terms": {
-                "_id": id_list
+                "id.keyword": id_list
                 }
             } 
         }       

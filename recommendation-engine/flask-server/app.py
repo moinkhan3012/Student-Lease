@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-from config import COLUMNS, ES_CA_CERT, ES_INDEX, ES_HOST, \
+from config import COLUMNS, ES_INDEX, ES_HOST, \
     ES_PASSWORD, ES_USERNAME, BUCKET_NAME, BUCKET_KEY, \
     AWS_ACCESS_KEY, AWS_SECRET_KEY
 
@@ -63,9 +63,7 @@ def load_pipeline_from_s3(bucket_name, key):
 pipeline = load_pipeline_from_s3(BUCKET_NAME, BUCKET_KEY)
 
 #make elasticsearch connection
-es = ElasticSearchWrapper(host=ES_HOST,
-        ca_certs=ES_CA_CERT,
-        http_auth=(ES_USERNAME, ES_PASSWORD))
+es = ElasticSearchWrapper(host=ES_HOST,http_auth=(ES_USERNAME, ES_PASSWORD))
 
 @app.route("/api")
 def home():
@@ -167,10 +165,12 @@ def recommmendation():
         item_list = request.json["item_list"]
         result = es.search_by_id(ES_INDEX, item_list)
 
-        embeddings = np.array([res['_source']['embedding'] for res in result['hits']['hits']]).mean(axis=0)
+        # print(result)
+        embeddings = np.array([res['_source']['embedding']  for res in result['hits']['hits'] if res['_source']['embedding']]).mean(axis=0)
 
-        response = es.recommend(ES_INDEX, embeddings)
-        return (json.dumps(response.body), 200)
+        response = es.recommend(ES_INDEX, embeddings.tolist(), stored_fields=['id'])
+        print(response)
+        return (json.dumps(response), 200)
 
     except Exception as err:
         response = {
