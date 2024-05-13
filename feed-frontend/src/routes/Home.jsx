@@ -21,7 +21,14 @@ const Home = () => {
           <div className='subtitle1'>
             Sign in for a more personalized experience
           </div>
-          <div className='login'>Sign In</div>
+          <div className='btns-sign'>
+            <div className='login' onClick={() => navigate("/login")}>
+              Sign In
+            </div>
+            <div className='login' onClick={() => navigate("/signup")}>
+              Sign Up
+            </div>
+          </div>
         </div>
       </div>
       <div className='description-flex'>
