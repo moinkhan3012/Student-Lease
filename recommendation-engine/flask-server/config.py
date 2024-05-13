@@ -9,4 +9,6 @@ BUCKET_NAME=os.getenv("BUCKET_NAME")
 BUCKET_KEY=os.getenv("BUCKET_KEY")
 AWS_ACCESS_KEY=os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_KEY=os.getenv("AWS_SECRET_KEY")
-COLUMNS = ['streetAddress','cityRegion','zipcode','bathrooms','bedrooms','description','homeStatus','latitude','livingArea','longitude','price','homeType','Month','Day','Year','preferences','laundary','amenities']
+COLUMNS = ['bathrooms', 'bedrooms', 'livingArea','homeType', 'homeStatus', 'latitude',  
+       'longitude', 'zipcode','price',  'Month', 'Day', 'Year', 'leaseDuration', 
+           'preferences', 'amenities','streetAddress', 'cityRegion', 'description']

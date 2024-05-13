@@ -111,7 +111,7 @@ def embeddings():
             "Day": int,
             "Year": int,
             "preferences": "string",
-            "laundary": int,
+            "leaseDuration": int,
             "amenities": "string"
         }
     """
