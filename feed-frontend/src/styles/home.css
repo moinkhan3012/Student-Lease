@@ -31,6 +31,13 @@
   border-radius: 10px;
   background-color: #016afd;
 }
+.btns-sign {
+  display: flex;
+}
+.btns-sign > div {
+  margin: 1em;
+  text-decoration: none;
+}
 .login:hover,
 .find-sublets {
   cursor: pointer;
