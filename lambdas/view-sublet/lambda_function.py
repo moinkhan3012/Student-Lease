@@ -9,7 +9,7 @@ from geopy.exc import GeocoderTimedOut
 from boto3.dynamodb.conditions import Key
 import io
 
-esUrl = "https://search-search-test-elastic1-dedivdy53hkcwdyfce4yy7m36m.aos.us-east-1.on.aws/sublets/_search"
+esUrl = "https://search-sublease-3f4v5554g2z6jojki2xbdd5jfu.us-east-1.es.amazonaws.com/sublease/_search"
 dynamo = boto3.resource('dynamodb')
 dynamodb = dynamo.Table('Listings')
 s3 = boto3.client('s3')
@@ -37,16 +37,15 @@ def lambda_handler(event, context):
     print('location', lat, lon)
     # Perform search in Elasticsearch
     body={
-        "_source": ['id'],
-
+        "_source": ["id"],
         "query": {
             "bool": {
                 "must": [
-                    {"match": {"bedrooms": search_params['bedrooms']}},
+                    {"match": {"bedrooms": int(search_params['bedrooms'])}},
                     {"range": {"monthlyRent": {"lte": int(search_params['monthlyRent'])}}},
                     {"range": {"bathrooms": {"gte": int(search_params['bathrooms'])}}},
                     # {"range": {"dateAvailable": {"gte": search_params['dateAvailable']}}},
-                    {"range": {"leaseDuration": {"gte": search_params['leaseDuration']}}}
+                    {"range": {"leaseDuration": {"gte": int(search_params['leaseDuration'])}}}
                 ],
                 "filter": {
                     "geo_distance": {
@@ -65,7 +64,7 @@ def lambda_handler(event, context):
         esUrl,
         data=json.dumps(body),
         headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
     )
     
     # # Extract apartment IDs from search results
