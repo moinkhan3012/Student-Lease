@@ -38,7 +38,14 @@ This platform centralizes all these functionalities to simplify student housing 
 
 ### Data Layer
 - **DynamoDB**: Used for storing chat messages, user data, marketplace postings, and sublet listings.
+- **SQS (Simple Queue Service)**: Used to store click streams. When a user opens any listing, a Lambda function saves the user_id and listing_id in the SQS. An EventBridge Lambda trigger reads data from SQS and updates the timeVisited attribute in Elasticsearch, indicating the number of times an item has been viewed overall. Additionally, the listing_id is added to the DynamoDB against the user_id to store the last visited item list, which defaults to 10.
 
+  - **Importance of SQS**
+Using SQS allows us to focus on critical functions, reducing latency and handling non-critical functions like updating the timeVisited count asynchronously. This ensures that the application remains responsive and can handle high loads without performance degradation.
+- **Elasticsearch**: Elasticsearch is used in our system to manage and search sublet listings efficiently. It provides the following functionalities:
+  - **Full-Text Search:** Allows users to perform complex searches quickly and accurately.
+  - **Recommendation:** We used OpenSearch service to store our elastic search data with embeddings for recommendation.
+  - **Scalability:** Manages large volumes of data and high query loads with ease.
 ### Logical Layer
 - **Recommendation Engine**: Utilizes content-based filtering to suggest compatible roommates based on detailed listing information.
 
@@ -53,34 +60,6 @@ This platform centralizes all these functionalities to simplify student housing 
 ## Results
 
 Our project successfully created a recommendation system, chat functionality, and a platform for managing sublet postings and personal item sales. The recommendation system provided robust and accurate suggestions for users.
-
-## Folder Structure
-
-```
-Student-Lease/
-├── src/
-│   ├── components/
-│   ├── services/
-│   ├── pages/
-│   ├── App.js
-│   ├── index.js
-│   └── ...
-├── public/
-│   ├── index.html
-│   └── ...
-├── api/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   └── server.js
-├── database/
-│   ├── dynamoDB/
-│   └── ...
-├── Cloud_computing.postman_collection.json
-├── package.json
-├── README.md
-└── ...
-```
 
 ## Postman Collection
 
