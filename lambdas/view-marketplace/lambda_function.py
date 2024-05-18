@@ -61,7 +61,7 @@ def lambda_handler(event, context):
         esUrl,
         data=json.dumps(body),
         headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
     )
     # # Extract apartment IDs from search results
     print('search_result', search_result.json())

@@ -89,7 +89,7 @@ def update_index_listing(listing):
             url,
             data=json.dumps(body),
             headers=headers,
-        auth=HTTPBasicAuth('', '')
+        auth=HTTPBasicAuth('sublease', 'Elasticsearch@1')
         )
         sublet_id = response.json()['hits']['hits'][0]['_id']
         print("sublet_id", sublet_id)
@@ -150,7 +150,7 @@ def create_listing(request_body, listing_id, user_id):
     # Construct the item to be inserted into DynamoDB
     listing_item = {
         'id': listing_id,
-        'user_id': user_id,  # Include user ID
+        'user_id': request_body['user_id'],  # Include user ID
         'title': request_body['title'],
         'address': request_body.get('address', None),
         'latitude': latitude,

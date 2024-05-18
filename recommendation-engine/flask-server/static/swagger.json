@@ -57,7 +57,7 @@
                 },
                 "description": {
                   "type": "string",
-                  "example": "Discover Marble Hill..."
+                  "example": "Beautifully painted home with spacious rooms and appealing view. Easy walk to public transit and great neighborhood!"
                 },
                 "homeStatus": {
                   "type": "number",
@@ -81,7 +81,7 @@
                 },
                 "homeType": {
                   "type": "string",
-                  "example": "Private"
+                  "example": "private"
                 },
                 "Month": {
                   "type": "number",
@@ -99,13 +99,13 @@
                   "type": "string",
                   "example": "male,female,non_smoker,non_veg"
                 },
-                "laundary": {
+                "leaseDuration": {
                   "type": "number",
-                  "example": 0
-                },
+                  "example": 1
+                },                
                 "amenities": {
                   "type": "string",
-                  "example": "ac,furnished,cooling,heating,parking"
+                  "example": "ac,furnished,cooling,heating,parking,laundary"
                 }
               }
             }
@@ -157,13 +157,20 @@
               "properties": {
                 "item_list": {
                   "type": "list",
-                  "example": [
-                    "6633ea6941c4340db760e079",
-                    "6633ea6941c4340db760e07a",
-                    "6633ea6941c4340db760e07b",
-                    "6633ea6941c4340db760e07c",
-                    "6633ea6941c4340db760e07d"
-                  ]
+                  "example": ["56f032dd-c2a5-4782-a7d7-dbee1c4f9182",
+                  "3f58704a-2684-4663-a5ab-1ac985a8b1ee",
+                  "45e864c5-78d3-40c0-b31c-1b215070dcfb",
+                  "44fd8a31-1da9-4091-a4d5-ef11da522d9f",
+                  "7498bb1a-b205-4b23-89c1-3fe915876883",
+                  "170e9e95-4891-45f1-9d86-cbd0b1a11fb4",
+                  "6cfb5f0a-5396-4b29-bd11-349ad2cec4b3",
+                  "bf41580a-8d62-415a-a5e5-05521834bcd2",
+                  "e20f9f7e-a691-4b6e-9cf0-a10b22cddeb3",
+                  "774881e2-2841-4282-bb51-505bbd9fc795",
+                  "ca267083-19b6-4937-903d-c0b17382f37b",
+                  "4c0e5a26-20cf-4199-8ce0-337fee068c1f",
+                  "2238494d-9252-4461-8820-1dbeb9924415",
+                  "d31bf2d9-7aa3-4286-a25f-a41c3be5a0a2"]
                 }
               }
             }
