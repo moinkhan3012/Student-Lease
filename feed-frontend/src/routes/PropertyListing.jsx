@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Header, Footer } from "../components";
 import { useEffect, useState } from "react";
-import { getBase64 } from "../utils";
+import { getBase64, getCookieValue } from "../utils";
 import "../styles/header.css";
 import "../styles/property-listing.css";
 import { CREATE_SUBLET_URL } from "../constants";
@@ -46,6 +46,7 @@ const PropertyListing = () => {
   };
   const createListing = () => {
     const reqBody = {
+      user_id: getCookieValue("user_id"),
       monthlyRent: parseInt(monthlyRent),
       securityDeposit: parseInt(securityDeposit),
       bedrooms: parseInt(bedrooms),
@@ -86,11 +87,8 @@ const PropertyListing = () => {
       },
       body: JSON.stringify({ reqBody }),
     })
-      .then((res) => {
-        res
-          .json()
-          .then((data) => console.log("Response body", JSON.parse(data.body)));
-      })
+      .then((res) => res.json())
+      .then((data) => console.log("Response body", data))
       .catch((error) => console.log("Error while processing", error));
   };
   return (

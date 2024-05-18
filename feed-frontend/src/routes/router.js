@@ -9,6 +9,8 @@ import SearchListing from "./SearchListing";
 import ViewListing from "./ViewListing";
 import Login from "./Login";
 import SignUp from "./SignUp";
+import ChatHome from "./ChatHome";
+import ChatClient from "./ChatClient";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -21,6 +23,8 @@ const router = createBrowserRouter([
   { path: "/marketplace-listing", element: <MarketplaceListing /> },
   { path: "/search-listing", element: <SearchListing /> },
   { path: "/view-listing", element: <ViewListing /> },
+  { path: "/chat-home", element: <ChatHome /> },
+  { path: "/chat-client", element: <ChatClient /> },
 ]);
 
 export default router;

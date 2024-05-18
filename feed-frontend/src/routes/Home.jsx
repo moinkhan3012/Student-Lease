@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { Footer } from "../components";
 import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
+import { getCookieValue } from "../utils";
 
 const Home = () => {
   const navigate = useNavigate();
+  const isLoggedIn = getCookieValue("email") != "";
   useEffect(() => {
     document.title = "Student Lease | Login";
   }, []);
@@ -44,7 +46,15 @@ const Home = () => {
           <div id='find-sublet-div'>
             <span
               className='find-sublets'
-              onClick={() => navigate("/search-listing")}
+              onClick={() => {
+                if (isLoggedIn) {
+                  navigate("/search-listing", {
+                    state: { email: getCookieValue("email") },
+                  });
+                } else {
+                  navigate("/login");
+                }
+              }}
             >
               Find Sublets
             </span>

@@ -6,6 +6,9 @@ import "../styles/header.css";
 export default function Header() {
   const navigate = useNavigate();
   const [showLogoutButton, setShowLogoutButton] = useState(false);
+  const sendToChatHome = () => {
+    navigate("/chat-home");
+  };
   return (
     <>
       <div className='header-container'>
@@ -14,10 +17,13 @@ export default function Header() {
         </span>
         <img
           className='white-background-logo'
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/post-listing")}
           src={require("../resources/logo-white-background.png")}
           alt=''
         />
+        {/* <span className='chat-option' onClick={sendToChatHome}>
+          Chat
+        </span> */}
         <div className='dropdown'>
           <img
             src={require("../resources/user.png")}
@@ -26,9 +32,11 @@ export default function Header() {
             onClick={() => setShowLogoutButton(!showLogoutButton)}
           />
           {showLogoutButton && (
-            <div class='user-image-dropdown-content'>
-              <a onClick={logout}>Logout</a>
-            </div>
+            <>
+              <div class='user-image-dropdown-content'>
+                <a onClick={logout}>Logout</a>
+              </div>
+            </>
           )}
         </div>
       </div>

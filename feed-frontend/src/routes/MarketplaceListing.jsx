@@ -1,6 +1,6 @@
 import { Header, Footer } from "../components";
 import { useState } from "react";
-import { getBase64 } from "../utils";
+import { getBase64, getCookieValue } from "../utils";
 import { CREATE_MARKETPLACE_URL } from "../constants";
 import "../styles/marketplace-listing.css";
 
@@ -19,6 +19,7 @@ const MarketplaceListing = () => {
   };
   const createMarketplaceListing = () => {
     const reqBody = {
+      user_id: getCookieValue("user_id"),
       title: title,
       address: address,
       price: price,

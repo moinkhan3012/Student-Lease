@@ -1,14 +1,40 @@
 import { useEffect, useState } from "react";
 import { SearchHeader, Listing } from "../components";
-import { VIEW_MARKETPLACE_URL, VIEW_SUBLET_URL } from "../constants";
+import {
+  POPULATE_FEED_URL,
+  VIEW_MARKETPLACE_URL,
+  VIEW_SUBLET_URL,
+} from "../constants";
+import { useLocation } from "react-router-dom";
 import "../styles/search-listing.css";
+import { set_cookie } from "../utils";
 
 const SearchListing = () => {
   const [subletOrMarketplace, setSubletOrMarketplace] = useState("sublets");
   const [listingDetails, setListingDetails] = useState([]);
+  const { state } = useLocation();
+  const { email } = state;
 
   useEffect(() => {
     document.title = "Student Lease | Search listings";
+    console.log(state);
+    const reqBody = { email: email };
+    console.log(reqBody);
+    fetch(POPULATE_FEED_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reqBody }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        set_cookie("user_id", data.body.user_id);
+        let listingArray = [];
+        JSON.parse(data.body["message"]).forEach((listing) => {
+          listingArray.push(listing);
+        });
+        setListingDetails(listingArray);
+      })
+      .catch((err) => console.log("error calling populate feed", err));
   }, []);
   const searchListings = (searchQuery) => {
     const searchListingsUrl =
@@ -25,12 +51,6 @@ const SearchListing = () => {
       .then((res) => res.json())
       .then((data) => {
         let listingArray = [];
-        console.log(
-          `${
-            subletOrMarketplace == "sublets" ? "sublet" : "marketplace item"
-          } details`,
-          JSON.parse(data.body)["details"]
-        );
         JSON.parse(data.body)["details"].forEach((listing) => {
           listingArray.push(listing);
         });

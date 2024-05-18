@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/post-listing.css";
 import { useEffect } from "react";
+import { getCookieValue } from "../utils";
 
 const PostListing = () => {
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Student Lease | Post listing";
+    console.log("email", getCookieValue("email"));
   }, []);
   return (
     <div className='background'>
@@ -20,7 +22,11 @@ const PostListing = () => {
         <a
           href=''
           className='sublet-button marketplace-listing'
-          onClick={() => navigate("/search-listing")}
+          onClick={() =>
+            navigate("/search-listing", {
+              state: { email: getCookieValue("email") },
+            })
+          }
         >
           Search for sublease
         </a>

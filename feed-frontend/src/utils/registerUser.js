@@ -2,9 +2,9 @@ import {
   CognitoUserAttribute,
   CognitoUserPool,
 } from "amazon-cognito-identity-js";
-import { CLIENT_ID, USER_POOL_ID } from "../constants";
+import { CLIENT_ID, POPULATE_ON_SIGNUP_URL, USER_POOL_ID } from "../constants";
 
-export default function registerUser() {
+export default function registerUser(useremail) {
   var userPoolData = {
     UserPoolId: USER_POOL_ID, // Replace with your user pool id
     ClientId: CLIENT_ID, // Replace with your app client id
@@ -39,5 +39,16 @@ export default function registerUser() {
     }
     var cognitoUser = result.user;
     alert("User successfully registered: " + cognitoUser.getUsername());
+    const reqBody = { email: useremail };
+    fetch(POPULATE_ON_SIGNUP_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reqBody }),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
   });
 }

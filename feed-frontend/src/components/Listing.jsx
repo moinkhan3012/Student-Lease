@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/listing.css";
 import { UPDATE_CLICKS_URL } from "../constants";
+import { getCookieValue } from "../utils";
 
 const Listing = ({ listingDetails, isSublet }) => {
-  // console.log("listing details", listingDetails);
+  console.log("listing details", listingDetails);
   const image = listingDetails.base64_images[0];
   const navigate = useNavigate();
   let bedsAndDistance;
@@ -25,17 +26,21 @@ const Listing = ({ listingDetails, isSublet }) => {
     // TODO: Update like unlike in database
   };
   const updateClicks = async (listingId) => {
-    // console.log("updating click");
-    // const reqBody = { listingId: listingId };
-    // fetch(UPDATE_CLICKS_URL, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(reqBody),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => console.log(data));
+    const reqBody = {
+      listing_id: listingId,
+      user_id: getCookieValue("user_id"),
+    };
+    console.log("update click", reqBody);
+    fetch(UPDATE_CLICKS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
   };
   const viewSublease = () => {
     updateClicks(listingDetails.id);

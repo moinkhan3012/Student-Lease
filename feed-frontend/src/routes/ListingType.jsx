@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/post-listing.css";
 import { useEffect } from "react";
+import { getCookieValue } from "../utils";
 
 const ListingType = () => {
   const navigate = useNavigate();

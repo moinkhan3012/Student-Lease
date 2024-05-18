@@ -47,9 +47,12 @@ const SearchHeader = ({ onClick, isSublet }) => {
             Search
           </span>
         </div>
+        <span className='chat-option' onClick={() => navigate("/chat-home")}>
+          Chat
+        </span>
         <img
           className='white-background-logo'
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/post-listing")}
           src={require("../resources/logo-white-background.png")}
           alt=''
         />

@@ -4,8 +4,10 @@ import {
   CognitoUser,
 } from "amazon-cognito-identity-js";
 import { CLIENT_ID, USER_POOL_ID } from "../constants";
+import set_cookie from "./setCookie";
 
-export default function authenticateUser() {
+export default function authenticateUser(navigate, username) {
+  set_cookie("email", username);
   var userPoolData = {
     UserPoolId: USER_POOL_ID, // Replace with your user pool id
     ClientId: CLIENT_ID, // Replace with your app client id
@@ -30,8 +32,11 @@ export default function authenticateUser() {
 
   cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: function (result) {
-      alert("Login successful. Welcome " + username + "!");
-      // Trigger Function for Further Action
+      console.log(username);
+      // navigate("/post-listing");
+      navigate("/search-listing", {
+        state: { email: username },
+      });
     },
     onFailure: function (err) {
       alert("Login failed: " + err.message);

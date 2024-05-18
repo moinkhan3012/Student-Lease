@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Header, Footer } from "../components";
 import "../styles/view-listing.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getCookieValue } from "../utils";
 
 const ViewListing = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState([
     // "https://via.placeholder.com/50",
     // "https://via.placeholder.com/1000",
@@ -96,7 +98,18 @@ const ViewListing = () => {
               />
               <div className='listing-username'>Peter Bailey</div>
             </div>
-            <div className='listing-owner-chat'>Click to ask a question</div>
+            <div
+              className='listing-owner-chat'
+              onClick={() =>
+                navigate(
+                  `/chat-client?data=${
+                    state.listingDetails.user_id
+                  }&user_id=${getCookieValue("user_id")}`
+                )
+              }
+            >
+              Click to ask a question
+            </div>
           </div>
         </div>
       </div>
